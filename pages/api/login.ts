@@ -1,14 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import axios from "axios";
 import * as firebaseAdmin from "firebase-admin";
-import serviceAccount from "../../cs-poll-firebase-adminsdk-g0vwr-c723888357.json";
 
-if (firebaseAdmin.app.length === 0) {
+if (firebaseAdmin.apps.length === 0) {
   firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert({
-      privateKey: serviceAccount.private_key,
-      clientEmail: serviceAccount.client_email,
-      projectId: serviceAccount.project_id,
+      privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.CLIENT_EMAIL,
+      projectId: process.env.PROJECT_ID,
     }),
   });
 }
