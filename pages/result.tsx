@@ -48,7 +48,7 @@ function Result() {
           <h1>กำลังโหลด</h1>
         ) : (
           <>
-            <h1 className="text-2xl self-center">โหวตคณะกรรมการ</h1>
+            <h1 className="text-2xl self-center">เหล่าคณะกรรมการที่คุณโหวต</h1>
             <div className="mt-4">
               <h1 className="text-2xl my-4">เฮดภาค</h1>
               <div className="flex flex-col gap-4">

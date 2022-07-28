@@ -108,6 +108,7 @@ function AddPerson() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 type="name"
+                placeholder="ชื่อเล่น (ชื่อจริง)"
                 className="border-2 rounded-lg p-2 w-full mt-2"
               />
             </div>

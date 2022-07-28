@@ -65,6 +65,7 @@ const Home: NextPage = ({
       }
     } catch (err) {
       alert("คุณโหวตไปแล้ว!!!");
+      localStorage.setItem("isVoted", "true");
     }
   };
 
