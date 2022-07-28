@@ -36,7 +36,7 @@ function Result() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4">
+    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4 px-6">
       <button
         className="bg-red-500 text-white w-fit px-4 py-2 rounded-lg self-end"
         onClick={handleOnLogoutClick}

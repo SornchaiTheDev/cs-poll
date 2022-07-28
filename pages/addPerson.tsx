@@ -61,7 +61,7 @@ function AddPerson() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4">
+    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4 px-6">
       <div className="bg-white border-2 px-10 py-4 rounded-lg  flex flex-col w-full">
         <Link href="/">
           <a className="inline-flex items-center gap-2 py-4 w-fit">

@@ -82,7 +82,7 @@ const Home: NextPage = ({
   if (loading) return <></>;
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4">
+    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4 px-6">
       <div className="flex w-full justify-end items-center gap-2">
         <button
           className="bg-lime-400 w-fit px-4 py-2 rounded-lg self-end"
