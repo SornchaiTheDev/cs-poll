@@ -23,7 +23,7 @@ const Login: NextPage = () => {
 
   return (
     <div className="flex min-h-screen justify-center items-center">
-      <div className="bg-white border-2 px-10 py-4 rounded-lg w-1/2 md:w-4/12 flex flex-col items-center">
+      <div className="bg-white border-2 px-10 py-4 rounded-lg w-3/4 md:w-4/12 flex flex-col items-center">
         <h2 className="font-bold text-lg">ล็อคอินด้วย Nontri Account</h2>
 
         <input

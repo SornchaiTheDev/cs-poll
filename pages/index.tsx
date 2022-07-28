@@ -48,6 +48,8 @@ const Home: NextPage = ({
     setPosition(e.target.value);
   };
 
+  if (loading) return <></>;
+
   return (
     <div className="flex min-h-screen justify-center items-center">
       <div className="bg-white border-2 px-10 py-4 rounded-lg w-11/12 md:w-1/2 flex flex-col ">
@@ -107,7 +109,7 @@ const Home: NextPage = ({
               </div>
               <h1 className="text-2xl my-4">เหรัญญิก</h1>
               <div className="flex flex-col gap-4">
-                {moneyPos.map(({ name, id } : any) => (
+                {moneyPos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
