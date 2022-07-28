@@ -10,7 +10,7 @@ const Home: NextPage = ({
   secondheadFemalePos,
   secretaryPos,
   moneyPos,
-}) => {
+}: any) => {
   const { session, loading } = useSession();
   const router = useRouter();
 
@@ -44,10 +44,10 @@ const Home: NextPage = ({
     }
   };
 
-  const handleOnRadioChange = (e) => {
+  const handleOnRadioChange = (e: any) => {
     setPosition(e.target.value);
   };
-  
+
   return (
     <div className="flex min-h-screen justify-center items-center">
       <div className="bg-white border-2 px-10 py-4 rounded-lg w-11/12 md:w-1/2 flex flex-col ">
@@ -59,7 +59,7 @@ const Home: NextPage = ({
             <div className="mt-4">
               <h1 className="text-2xl my-4">เฮดภาค</h1>
               <div className="flex flex-col gap-4">
-                {headPos.map(({ name, id }) => (
+                {headPos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
@@ -71,7 +71,7 @@ const Home: NextPage = ({
               </div>
               <h1 className="text-2xl my-4">รองเฮดภาค อันดับ 1</h1>
               <div className="flex flex-col gap-4">
-                {secondheadMalePos.map(({ name, id }) => (
+                {secondheadMalePos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
@@ -83,7 +83,7 @@ const Home: NextPage = ({
               </div>
               <h1 className="text-2xl my-4">รองเฮดภาค อันดับ 2</h1>
               <div className="flex flex-col gap-4">
-                {secondheadFemalePos.map(({ name, id }) => (
+                {secondheadFemalePos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
@@ -95,7 +95,7 @@ const Home: NextPage = ({
               </div>
               <h1 className="text-2xl my-4">เลขานุการ</h1>
               <div className="flex flex-col gap-4">
-                {secretaryPos.map(({ name, id }) => (
+                {secretaryPos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
@@ -107,7 +107,7 @@ const Home: NextPage = ({
               </div>
               <h1 className="text-2xl my-4">เหรัญญิก</h1>
               <div className="flex flex-col gap-4">
-                {moneyPos.map(({ name, id }) => (
+                {moneyPos.map(({ name, id } : any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
