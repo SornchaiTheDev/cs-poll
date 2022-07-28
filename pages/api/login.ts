@@ -32,16 +32,23 @@ export default async function handler(
     );
     const { firstNameTh, lastNameTh, idCode } = myku.data.user;
 
-    await firebaseAdmin
+    const isAlreadySignUp = await firebaseAdmin
       .firestore()
       .collection("people")
       .doc(idCode)
-      .set({
-        name: firstNameTh + " " + lastNameTh,
-        idCode,
-        remains: ["head", "second-head", "secretary", "money"],
-        canVote: true,
-      });
+      .get();
+    if (!isAlreadySignUp.exists) {
+      await firebaseAdmin
+        .firestore()
+        .collection("people")
+        .doc(idCode)
+        .set({
+          name: firstNameTh + " " + lastNameTh,
+          idCode,
+          remains: ["head", "second-head", "secretary", "money"],
+          canVote: true,
+        });
+    }
 
     res.send(myku.data);
   } catch (err) {

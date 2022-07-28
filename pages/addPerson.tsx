@@ -9,6 +9,7 @@ function AddPerson() {
   const [name, setName] = useState<string>("");
   const [remains, setRemains] = useState<string[]>([]);
   const [position, setPosition] = useState<string>("head");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isErr, setIsErr] = useState<boolean>(false);
   const router = useRouter();
 
@@ -24,11 +25,13 @@ function AddPerson() {
   }, [loading]);
 
   const getRemains = async () => {
+    setIsLoading(true);
     const getRemains = await axios.post("/api/getRemains", {
       token: localStorage.getItem("accesstoken"),
     });
     setRemains(getRemains.data.remains);
     setPosition(getRemains.data.remains[0]);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -65,7 +68,9 @@ function AddPerson() {
             <BsArrowLeft /> <h2>กลับหน้าหลัก</h2>
           </a>
         </Link>
-        {remains.length === 0 ? (
+        {isLoading ? (
+          <h1 className="text-center my-10">กำลังโหลด ...</h1>
+        ) : remains.length === 0 ? (
           <div className="m-4 bg-red-500 py-4 rounded-lg">
             <h1 className="text-white font-bold text-center">
               ไม่สามารถเสนอชื่อได้แล้ว

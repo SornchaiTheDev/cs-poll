@@ -11,38 +11,46 @@ export default async function handler(
     const { head, secondHead, secretary, money } = req.body;
     const decoded: any = jwt_decode(req.body.token);
     if (decoded.exp > Date.now() / 1000) {
-      console.log(head, secondHead, secretary, money);
-      await firebaseAdmin
-        .firestore()
-        .collection("head")
-        .doc(head)
-        .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
-
-      await firebaseAdmin
-        .firestore()
-        .collection("second-head")
-        .doc(secondHead)
-        .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
-
-      await firebaseAdmin
-        .firestore()
-        .collection("secretary")
-        .doc(secretary)
-        .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
-
-      await firebaseAdmin
-        .firestore()
-        .collection("money")
-        .doc(money)
-        .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
-
-      await firebaseAdmin
+      const person = await firebaseAdmin
         .firestore()
         .collection("people")
         .doc(decoded.idcode)
-        .update({
-          canVote: false,
-        });
+        .get();
+      if (person.data()!.canVote) {
+        await firebaseAdmin
+          .firestore()
+          .collection("head")
+          .doc(head)
+          .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
+
+        await firebaseAdmin
+          .firestore()
+          .collection("second-head")
+          .doc(secondHead)
+          .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
+
+        await firebaseAdmin
+          .firestore()
+          .collection("secretary")
+          .doc(secretary)
+          .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
+
+        await firebaseAdmin
+          .firestore()
+          .collection("money")
+          .doc(money)
+          .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
+
+        await firebaseAdmin
+          .firestore()
+          .collection("people")
+          .doc(decoded.idcode)
+          .update({
+            canVote: false,
+          });
+      } else {
+        throw Error("already voted");
+      }
 
       res.send({ code: 200, status: "success" });
     } else {

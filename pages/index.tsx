@@ -47,18 +47,24 @@ const Home: NextPage = ({
     setMoney(e.target.value);
   };
 
-  const handleOnVote = () => {
+  const handleOnVote = async () => {
     if (head === "" || secondHead === "" || secretary === "" || money === "")
       return;
-    console.log(head, secondHead, secretary, money);
+    try {
+      const res = await axios.post("/api/vote", {
+        head,
+        secondHead,
+        secretary,
+        money,
+        token: localStorage.getItem("accesstoken"),
+      });
 
-    axios.post("/api/vote", {
-      head,
-      secondHead,
-      secretary,
-      money,
-      token: localStorage.getItem("accesstoken"),
-    });
+      if (res.data.status === "success") {
+        router.reload();
+      }
+    } catch (err) {
+      alert("คุณโหวตไปแล้ว!!!");
+    }
   };
 
   const handleOnLogoutClick = () => {
