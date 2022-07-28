@@ -176,7 +176,8 @@ const Home: NextPage = ({
               </p>
               <button
                 onClick={handleOnVote}
-                className="w-full p-2 bg-lime-400 rounded-lg my-4"
+                disabled={head === "" || secondHead === "" || secretary === "" || money === ""}
+                className="w-full p-2 bg-lime-400 disabled:bg-gray-200 rounded-lg my-4"
               >
                 ส่ง
               </button>

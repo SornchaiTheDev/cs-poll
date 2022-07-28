@@ -11,7 +11,11 @@ function Result() {
     const user = await axios.post("/api/getUser", {
       token: localStorage.getItem("accesstoken"),
     });
-    setVotes(user.data.votes);
+    if (user.data.votes !== undefined) {
+      setVotes(user.data.votes);
+    } else {
+      router.replace("/");
+    }
     setIsLoading(false);
   };
   useEffect(() => {
