@@ -5,7 +5,7 @@ import * as firebaseAdmin from "firebase-admin";
 if (firebaseAdmin.apps.length === 0) {
   firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert({
-      privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, "\n"),
       clientEmail: process.env.CLIENT_EMAIL,
       projectId: process.env.PROJECT_ID,
     }),
@@ -18,7 +18,7 @@ export default async function handler(
 ) {
   if (req.method !== "POST") return res.status(400).send("Method not allowed");
   try {
-    const data = await axios.post(
+    const myku = await axios.post(
       "https://myapi.ku.th/auth/login",
       {
         username: req.body.username,
@@ -30,8 +30,20 @@ export default async function handler(
         },
       }
     );
+    const { firstNameTh, lastNameTh, idCode } = myku.data.user;
 
-    res.send(data.data);
+    await firebaseAdmin
+      .firestore()
+      .collection("people")
+      .doc(idCode)
+      .set({
+        name: firstNameTh + " " + lastNameTh,
+        idCode,
+        remains: ["head", "second-head", "secretary", "money"],
+        canVote: true,
+      });
+
+    res.send(myku.data);
   } catch (err) {
     res.status(500).send("Internal server error");
   }

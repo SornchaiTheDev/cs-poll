@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import * as firebaseAdmin from "firebase-admin";
 import jwt_decode from "jwt-decode";
-import { v4 as uuid } from "uuid";
 
 if (firebaseAdmin.apps.length === 0) {
   firebaseAdmin.initializeApp({
@@ -13,6 +12,10 @@ if (firebaseAdmin.apps.length === 0) {
   });
 }
 
+type decoded = {
+  idcode: string;
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -22,33 +25,14 @@ export default async function handler(
     const decoded: any = jwt_decode(req.body.token);
 
     if (decoded.exp > Date.now() / 1000) {
-      const { position, name } = req.body;
-      const getPosition = await firebaseAdmin
+      const decoded: decoded = jwt_decode(req.body.token as string);
+      const person = await firebaseAdmin
         .firestore()
-        .collection(position)
+        .collection("people")
+        .doc(decoded.idcode)
         .get();
-      let isExist = false;
-      getPosition.docs.map((doc) => {
-        if (name === doc.data().name) isExist = true;
-      });
 
-      if (!isExist) {
-        await firebaseAdmin
-          .firestore()
-          .collection(position)
-          .add({ name, by: decoded.idcode, vote: 0 });
-
-        await firebaseAdmin
-          .firestore()
-          .collection("people")
-          .doc(decoded.idcode)
-          .update({
-            remains: firebaseAdmin.firestore.FieldValue.arrayRemove(position),
-          });
-        res.send({ status: "success" });
-      } else {
-        res.send({ status: "already-added" });
-      }
+      res.send({ remains: person.data()!.remains });
     } else {
       res.send("token expired");
     }

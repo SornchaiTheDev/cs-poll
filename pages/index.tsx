@@ -1,13 +1,12 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSession from "../hooks/useSession";
 import { useRouter } from "next/router";
 import axios from "axios";
 
 const Home: NextPage = ({
   headPos,
-  secondheadMalePos,
-  secondheadFemalePos,
+  secondHeadPos,
   secretaryPos,
   moneyPos,
 }: any) => {
@@ -23,36 +22,69 @@ const Home: NextPage = ({
     }
   }, [loading]);
 
-  const [name, setName] = useState<string>("");
-  const [position, setPosition] = useState<string | null>(null);
-  const [isErr, setIsErr] = useState<boolean>(false);
-
-  const addPerson = async () => {
-    if (position === null) return;
-
-    const res = await axios.post("/api/addPerson", {
-      name,
-      position,
-      token: localStorage.getItem("accesstoken"),
-    });
-    const { status } = res.data;
-    if (status === "success") {
-      router.reload();
-    } else {
-      setIsErr(true);
-      setName("");
-    }
+  const handleOnAddPersonClick = () => {
+    router.push("/addPerson");
   };
 
-  const handleOnRadioChange = (e: any) => {
-    setPosition(e.target.value);
+  const [head, setHead] = useState<string>("");
+  const [secondHead, setSecondHead] = useState<string>("");
+  const [secretary, setSecretary] = useState<string>("");
+  const [money, setMoney] = useState<string>("");
+
+  const handleOnHeadClick = (e: any) => {
+    setHead(e.target.value);
+  };
+
+  const handleOnSecondHeadClick = (e: any) => {
+    setSecondHead(e.target.value);
+  };
+
+  const handleOnSecretaryClick = (e: any) => {
+    setSecretary(e.target.value);
+  };
+
+  const handleOnMoneyClick = (e: any) => {
+    setMoney(e.target.value);
+  };
+
+  const handleOnVote = () => {
+    if (head === "" || secondHead === "" || secretary === "" || money === "")
+      return;
+    console.log(head, secondHead, secretary, money);
+
+    axios.post("/api/vote", {
+      head,
+      secondHead,
+      secretary,
+      money,
+      token: localStorage.getItem("accesstoken"),
+    });
+  };
+
+  const handleOnLogoutClick = () => {
+    localStorage.removeItem("accesstoken");
+    router.replace("/login");
   };
 
   if (loading) return <></>;
 
   return (
-    <div className="flex min-h-screen justify-center items-center">
-      <div className="bg-white border-2 px-10 py-4 rounded-lg w-11/12 md:w-1/2 flex flex-col ">
+    <div className="flex flex-col min-h-screen justify-center items-center py-10 container mx-auto max-w-lg gap-4">
+      <div className="flex w-full justify-end items-center gap-2">
+        <button
+          className="bg-lime-400 w-fit px-4 py-2 rounded-lg self-end"
+          onClick={handleOnAddPersonClick}
+        >
+          เพิ่มผู้สมัคร
+        </button>
+        <button
+          className="bg-red-500 text-white w-fit px-4 py-2 rounded-lg self-end"
+          onClick={handleOnLogoutClick}
+        >
+          ออกจากระบบ
+        </button>
+      </div>
+      <div className="bg-white border-2 px-10 py-4 rounded-lg  flex flex-col w-full">
         {loading ? (
           <h1>กำลังโหลด</h1>
         ) : (
@@ -60,105 +92,72 @@ const Home: NextPage = ({
             <h1 className="text-2xl self-center">โหวตคณะกรรมการ</h1>
             <div className="mt-4">
               <h1 className="text-2xl my-4">เฮดภาค</h1>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4" onChange={handleOnHeadClick}>
                 {headPos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
                   >
-                    <input type="radio" name="head" />
+                    <input type="radio" name="head" value={id} />
                     <h4>{name}</h4>
                   </div>
                 ))}
               </div>
-              <h1 className="text-2xl my-4">รองเฮดภาค อันดับ 1</h1>
-              <div className="flex flex-col gap-4">
-                {secondheadMalePos.map(({ name, id }: any) => (
+              <h1 className="text-2xl my-4">รองเฮดภาค</h1>
+              <div
+                className="flex flex-col gap-4"
+                onChange={handleOnSecondHeadClick}
+              >
+                {secondHeadPos.map(({ name, id }: any) => (
                   <div
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
                   >
-                    <input type="radio" name="second-head-male" />
-                    <h4>{name}</h4>
-                  </div>
-                ))}
-              </div>
-              <h1 className="text-2xl my-4">รองเฮดภาค อันดับ 2</h1>
-              <div className="flex flex-col gap-4">
-                {secondheadFemalePos.map(({ name, id }: any) => (
-                  <div
-                    className="inline-flex items-center gap-4 text-xl"
-                    key={id}
-                  >
-                    <input type="radio" name="second-head-female" />
-                    <h4>{name}</h4>
-                  </div>
-                ))}
-              </div>
-              <h1 className="text-2xl my-4">เลขานุการ</h1>
-              <div className="flex flex-col gap-4">
-                {secretaryPos.map(({ name, id }: any) => (
-                  <div
-                    className="inline-flex items-center gap-4 text-xl"
-                    key={id}
-                  >
-                    <input type="radio" name="secretary" />
-                    <h4>{name}</h4>
-                  </div>
-                ))}
-              </div>
-              <h1 className="text-2xl my-4">เหรัญญิก</h1>
-              <div className="flex flex-col gap-4">
-                {moneyPos.map(({ name, id }: any) => (
-                  <div
-                    className="inline-flex items-center gap-4 text-xl"
-                    key={id}
-                  >
-                    <input type="radio" name="money" />
+                    <input type="radio" name="second-head" value={id} />
                     <h4>{name}</h4>
                   </div>
                 ))}
               </div>
 
-              <h2 className="text-lg mt-4 ">
-                เสนอชื่อเพิ่มเติม (เหลือ 1 ครั้ง)
-              </h2>
-              <div onChange={handleOnRadioChange}>
-                <div className="inline-flex items-center gap-4">
-                  <input type="radio" name="custom" value="head" />{" "}
-                  <label>เฮดภาค</label>
-                </div>
-                <div className="inline-flex items-center gap-4 ml-2">
-                  <input type="radio" name="custom" value="second-head1" />{" "}
-                  <label>รองเฮดภาค อันดับ 1</label>
-                </div>
-                <div className="inline-flex items-center gap-4 ml-2">
-                  <input type="radio" name="custom" value="second-head2" />{" "}
-                  <label>รองเฮดภาค อันดับ 2</label>
-                </div>
-                <div className="inline-flex items-center gap-4 ml-2">
-                  <input type="radio" name="custom" value="secretary" />{" "}
-                  <label>เลขานุการ</label>
-                </div>
-                <div className="inline-flex items-center gap-4 ml-2">
-                  <input type="radio" name="custom" value="money" />{" "}
-                  <label>เหรัญญิก</label>
-                </div>
+              <h1 className="text-2xl my-4">เลขานุการ</h1>
+              <div
+                className="flex flex-col gap-4"
+                onChange={handleOnSecretaryClick}
+              >
+                {secretaryPos.map(({ name, id }: any) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="secretary" value={id} />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
               </div>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="name"
-                placeholder="ชื่อ"
-                className="border-2 rounded-lg p-2 w-full mt-4"
-              />
+              <h1 className="text-2xl my-4">เหรัญญิก</h1>
+              <div
+                className="flex flex-col gap-4"
+                onChange={handleOnMoneyClick}
+              >
+                {moneyPos.map(({ name, id }: any) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="money" value={id} />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
+              </div>
+              <p className="text-red-500 mt-4">
+                *โปรดมั่นใจก่อนเลือก เพราะเลือกได้ครั้งเดียวเท่านั้น !
+              </p>
               <button
-                onClick={addPerson}
-                className="bg-green-500 w-full rounded-lg p-4 text-md my-4"
+                onClick={handleOnVote}
+                className="w-full p-2 bg-lime-400 rounded-lg my-4"
               >
                 ส่ง
               </button>
-              {isErr && <p className="text-red-500">*มีชื่อนี้อยู่แล้ว!</p>}
             </div>
           </>
         )}
@@ -178,18 +177,11 @@ export async function getServerSideProps(context: any) {
     headPos.push({ id: doc.id, ...doc.data() });
   });
 
-  const secondheadMale = query(collection(store, "second-head-1"));
-  const secondheadMalePos: any[] = [];
-  const querySecondheadMaleSnapshot = await getDocs(secondheadMale);
-  querySecondheadMaleSnapshot.forEach((doc) => {
-    secondheadMalePos.push({ id: doc.id, ...doc.data() });
-  });
-
-  const secondheadFemale = query(collection(store, "second-head-2"));
-  const secondheadFemalePos: any[] = [];
-  const querySecondheadSnapshot = await getDocs(secondheadFemale);
-  querySecondheadSnapshot.forEach((doc) => {
-    secondheadFemalePos.push({ id: doc.id, ...doc.data() });
+  const secondHead = query(collection(store, "second-head"));
+  const secondHeadPos: any[] = [];
+  const querysecondHeadSnapshot = await getDocs(secondHead);
+  querysecondHeadSnapshot.forEach((doc) => {
+    secondHeadPos.push({ id: doc.id, ...doc.data() });
   });
 
   const secretary = query(collection(store, "secretary"));
@@ -209,8 +201,7 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       headPos,
-      secondheadMalePos,
-      secondheadFemalePos,
+      secondHeadPos,
       secretaryPos,
       moneyPos,
     },
