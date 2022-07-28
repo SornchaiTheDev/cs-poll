@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# firebase-admin service key
+cs-poll-firebase-adminsdk-g0vwr-c723888357.json

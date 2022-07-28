@@ -1,86 +1,217 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from "next";
+import { useState, useEffect } from "react";
+import useSession from "../hooks/useSession";
+import { useRouter } from "next/router";
+import axios from "axios";
 
-const Home: NextPage = () => {
+const Home: NextPage = ({
+  headPos,
+  secondheadMalePos,
+  secondheadFemalePos,
+  secretaryPos,
+  moneyPos,
+}) => {
+  const { session, loading } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (session === null) {
+        localStorage.removeItem("accesstoken");
+        router.replace("/login");
+      }
+    }
+  }, [loading]);
+
+  const [name, setName] = useState<string>("");
+  const [position, setPosition] = useState<string | null>(null);
+  const [isErr, setIsErr] = useState<boolean>(false);
+
+  const addPerson = async () => {
+    if (position === null) return;
+
+    const res = await axios.post("/api/addPerson", {
+      name,
+      position,
+      token: localStorage.getItem("accesstoken"),
+    });
+    const { status } = res.data;
+    if (status === "success") {
+      router.reload();
+    } else {
+      setIsErr(true);
+      setName("");
+    }
+  };
+
+  const handleOnRadioChange = (e) => {
+    setPosition(e.target.value);
+  };
+  
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className="flex min-h-screen justify-center items-center">
+      <div className="bg-white border-2 px-10 py-4 rounded-lg w-11/12 md:w-1/2 flex flex-col ">
+        {loading ? (
+          <h1>กำลังโหลด</h1>
+        ) : (
+          <>
+            <h1 className="text-2xl self-center">โหวตคณะกรรมการ</h1>
+            <div className="mt-4">
+              <h1 className="text-2xl my-4">เฮดภาค</h1>
+              <div className="flex flex-col gap-4">
+                {headPos.map(({ name, id }) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="head" />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
+              </div>
+              <h1 className="text-2xl my-4">รองเฮดภาค อันดับ 1</h1>
+              <div className="flex flex-col gap-4">
+                {secondheadMalePos.map(({ name, id }) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="second-head-male" />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
+              </div>
+              <h1 className="text-2xl my-4">รองเฮดภาค อันดับ 2</h1>
+              <div className="flex flex-col gap-4">
+                {secondheadFemalePos.map(({ name, id }) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="second-head-female" />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
+              </div>
+              <h1 className="text-2xl my-4">เลขานุการ</h1>
+              <div className="flex flex-col gap-4">
+                {secretaryPos.map(({ name, id }) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="secretary" />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
+              </div>
+              <h1 className="text-2xl my-4">เหรัญญิก</h1>
+              <div className="flex flex-col gap-4">
+                {moneyPos.map(({ name, id }) => (
+                  <div
+                    className="inline-flex items-center gap-4 text-xl"
+                    key={id}
+                  >
+                    <input type="radio" name="money" />
+                    <h4>{name}</h4>
+                  </div>
+                ))}
+              </div>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+              <h2 className="text-lg mt-4 ">
+                เสนอชื่อเพิ่มเติม (เหลือ 1 ครั้ง)
+              </h2>
+              <div onChange={handleOnRadioChange}>
+                <div className="inline-flex items-center gap-4">
+                  <input type="radio" name="custom" value="head" />{" "}
+                  <label>เฮดภาค</label>
+                </div>
+                <div className="inline-flex items-center gap-4 ml-2">
+                  <input type="radio" name="custom" value="second-head1" />{" "}
+                  <label>รองเฮดภาค อันดับ 1</label>
+                </div>
+                <div className="inline-flex items-center gap-4 ml-2">
+                  <input type="radio" name="custom" value="second-head2" />{" "}
+                  <label>รองเฮดภาค อันดับ 2</label>
+                </div>
+                <div className="inline-flex items-center gap-4 ml-2">
+                  <input type="radio" name="custom" value="secretary" />{" "}
+                  <label>เลขานุการ</label>
+                </div>
+                <div className="inline-flex items-center gap-4 ml-2">
+                  <input type="radio" name="custom" value="money" />{" "}
+                  <label>เหรัญญิก</label>
+                </div>
+              </div>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                type="name"
+                placeholder="ชื่อ"
+                className="border-2 rounded-lg p-2 w-full mt-4"
+              />
+              <button
+                onClick={addPerson}
+                className="bg-green-500 w-full rounded-lg p-4 text-md my-4"
+              >
+                ส่ง
+              </button>
+              {isErr && <p className="text-red-500">*มีชื่อนี้อยู่แล้ว!</p>}
+            </div>
+          </>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+import { store } from "../firebase/";
+import { collection, query, getDocs } from "firebase/firestore";
+
+export async function getServerSideProps(context: any) {
+  const head = query(collection(store, "head"));
+  const headPos: any[] = [];
+  const queryHeadSnapshot = await getDocs(head);
+  queryHeadSnapshot.forEach((doc) => {
+    headPos.push({ id: doc.id, ...doc.data() });
+  });
+
+  const secondheadMale = query(collection(store, "second-head-1"));
+  const secondheadMalePos: any[] = [];
+  const querySecondheadMaleSnapshot = await getDocs(secondheadMale);
+  querySecondheadMaleSnapshot.forEach((doc) => {
+    secondheadMalePos.push({ id: doc.id, ...doc.data() });
+  });
+
+  const secondheadFemale = query(collection(store, "second-head-2"));
+  const secondheadFemalePos: any[] = [];
+  const querySecondheadSnapshot = await getDocs(secondheadFemale);
+  querySecondheadSnapshot.forEach((doc) => {
+    secondheadFemalePos.push({ id: doc.id, ...doc.data() });
+  });
+
+  const secretary = query(collection(store, "secretary"));
+  const secretaryPos: any[] = [];
+  const querySecretarySnapshot = await getDocs(secretary);
+  querySecretarySnapshot.forEach((doc) => {
+    secretaryPos.push({ id: doc.id, ...doc.data() });
+  });
+
+  const money = query(collection(store, "money"));
+  const moneyPos: any[] = [];
+  const queryMoneySnapshot = await getDocs(money);
+  queryMoneySnapshot.forEach((doc) => {
+    moneyPos.push({ id: doc.id, ...doc.data() });
+  });
+
+  return {
+    props: {
+      headPos,
+      secondheadMalePos,
+      secondheadFemalePos,
+      secretaryPos,
+      moneyPos,
+    },
+  };
+}
+export default Home;
