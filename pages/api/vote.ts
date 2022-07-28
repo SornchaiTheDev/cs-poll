@@ -20,25 +20,25 @@ export default async function handler(
         await firebaseAdmin
           .firestore()
           .collection("head")
-          .doc(head)
+          .doc(head.split(":")[1])
           .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
 
         await firebaseAdmin
           .firestore()
           .collection("second-head")
-          .doc(secondHead)
+          .doc(secondHead.split(":")[1])
           .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
 
         await firebaseAdmin
           .firestore()
           .collection("secretary")
-          .doc(secretary)
+          .doc(secretary.split(":")[1])
           .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
 
         await firebaseAdmin
           .firestore()
           .collection("money")
-          .doc(money)
+          .doc(money.split(":")[1])
           .update({ vote: firebaseAdmin.firestore.FieldValue.increment(1) });
 
         await firebaseAdmin
@@ -48,6 +48,22 @@ export default async function handler(
           .update({
             canVote: false,
           });
+
+        await firebaseAdmin
+          .firestore()
+          .collection("people")
+          .doc(decoded.idcode)
+          .set(
+            {
+              votes: [
+                head.split(":")[0],
+                secondHead.split(":")[0],
+                secretary.split(":")[0],
+                money.split(":")[0],
+              ],
+            },
+            { merge: true }
+          );
       } else {
         throw Error("already voted");
       }

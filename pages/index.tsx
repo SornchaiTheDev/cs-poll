@@ -60,12 +60,19 @@ const Home: NextPage = ({
       });
 
       if (res.data.status === "success") {
-        router.reload();
+        router.replace("/result");
+        localStorage.setItem("isVoted", "true");
       }
     } catch (err) {
       alert("คุณโหวตไปแล้ว!!!");
     }
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("isVoted") === "true") {
+      router.replace("/result");
+    }
+  }, []);
 
   const handleOnLogoutClick = () => {
     localStorage.removeItem("accesstoken");
@@ -104,7 +111,7 @@ const Home: NextPage = ({
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
                   >
-                    <input type="radio" name="head" value={id} />
+                    <input type="radio" name="head" value={name + ":" + id} />
                     <h4>{name}</h4>
                   </div>
                 ))}
@@ -119,7 +126,11 @@ const Home: NextPage = ({
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
                   >
-                    <input type="radio" name="second-head" value={id} />
+                    <input
+                      type="radio"
+                      name="second-head"
+                      value={name + ":" + id}
+                    />
                     <h4>{name}</h4>
                   </div>
                 ))}
@@ -135,7 +146,11 @@ const Home: NextPage = ({
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
                   >
-                    <input type="radio" name="secretary" value={id} />
+                    <input
+                      type="radio"
+                      name="secretary"
+                      value={name + ":" + id}
+                    />
                     <h4>{name}</h4>
                   </div>
                 ))}
@@ -150,7 +165,7 @@ const Home: NextPage = ({
                     className="inline-flex items-center gap-4 text-xl"
                     key={id}
                   >
-                    <input type="radio" name="money" value={id} />
+                    <input type="radio" name="money" value={name + ":" + id} />
                     <h4>{name}</h4>
                   </div>
                 ))}
