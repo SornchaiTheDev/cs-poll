@@ -40,9 +40,9 @@ function AddPerson() {
 
   const addPerson = async () => {
     if (position === null || name === "") return;
-
+    const firstName = localStorage.getItem("firstName");
     const res = await axios.post("/api/addPerson", {
-      name,
+      name: `${name} (${firstName})`,
       position,
       token: localStorage.getItem("accesstoken"),
     });
@@ -79,7 +79,7 @@ function AddPerson() {
         ) : (
           <>
             <h2 className="text-lg mt-4 text-center my-4 font-bold">
-              เสนอชื่อเพิ่มเติม
+              เสนอชื่อตัวเอง
             </h2>
             <h2>ตำแหน่ง</h2>
             {remains.length > 0 && (
@@ -103,12 +103,12 @@ function AddPerson() {
               </select>
             )}
             <div className="my-4">
-              <h2>ชื่อ</h2>
+              <h2>ชื่อเล่น</h2>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 type="name"
-                placeholder="ชื่อเล่น (ชื่อจริง)"
+                placeholder="ชื่อเล่น"
                 className="border-2 rounded-lg p-2 w-full mt-2"
               />
             </div>

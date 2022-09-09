@@ -89,7 +89,7 @@ const Home: NextPage = ({
           className="bg-lime-400 w-fit px-4 py-2 rounded-lg self-end"
           onClick={handleOnAddPersonClick}
         >
-          เพิ่มผู้สมัคร
+          เพิ่มชื่อตัวเอง
         </button>
         <button
           className="bg-red-500 text-white w-fit px-4 py-2 rounded-lg self-end"

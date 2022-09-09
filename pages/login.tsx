@@ -17,8 +17,10 @@ const Login: NextPage = () => {
         username,
         password,
       });
-      const { accesstoken } = res.data;
+      console.log(res.data);
+      const { accesstoken, user } = res.data;
       localStorage.setItem("accesstoken", accesstoken);
+      localStorage.setItem("firstName", user.firstNameTh);
       router.push("/");
     } catch (err) {
       setIsErr(true);
