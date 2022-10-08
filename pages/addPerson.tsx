@@ -21,6 +21,7 @@ function AddPerson() {
         localStorage.removeItem("accesstoken");
         router.replace("/login");
       }
+      setName(session!.firstNameTh + " " + session!.lastNameTh[0] + ".");
     }
   }, [loading]);
 
@@ -39,24 +40,16 @@ function AddPerson() {
 
   const addPerson = async () => {
     if (position === null || name === "") return;
-    const firstName = session!.firstNameTh;
 
-    const exp = new RegExp(firstName, "g");
+    const res = await axios.post("/api/addPerson", {
+      name,
+      position,
+      token: localStorage.getItem("accesstoken"),
+    });
+    const { status } = res.data;
 
-    if (name.match(exp)) {
-      const res = await axios.post("/api/addPerson", {
-        name,
-        position,
-        token: localStorage.getItem("accesstoken"),
-      });
-      const { status } = res.data;
-
-      if (status === "success") {
-        router.reload();
-      } else {
-        setIsErr(true);
-        setName("");
-      }
+    if (status === "success") {
+      router.replace("/");
     }
   };
 
@@ -115,9 +108,7 @@ function AddPerson() {
               <h2>ชื่อ</h2>
               <input
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="name"
-                placeholder="ชื่อเล่น (ชื่อจริง)"
+                disabled
                 className="border-2 rounded-lg p-2 w-full mt-2"
               />
             </div>
@@ -128,7 +119,6 @@ function AddPerson() {
             >
               ส่ง
             </button>
-            {isErr && <p className="text-red-500">*มีชื่อนี้อยู่แล้ว!</p>}
           </>
         )}
       </div>
