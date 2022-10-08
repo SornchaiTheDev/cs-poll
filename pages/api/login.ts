@@ -60,7 +60,7 @@ export default async function handler(
         .set({
           name: firstNameTh + " " + lastNameTh,
           idCode,
-          remains: ["head", "second-head", "secretary", "money"],
+          position: null,
           canVote: true,
         });
     }

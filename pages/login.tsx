@@ -17,7 +17,7 @@ const Login: NextPage = () => {
         username,
         password,
       });
-      console.log(res.data);
+
       const { accesstoken, user } = res.data;
       localStorage.setItem("accesstoken", accesstoken);
       localStorage.setItem("firstName", user.firstNameTh);

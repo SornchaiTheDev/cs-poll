@@ -32,7 +32,7 @@ export default async function handler(
         .doc(decoded.idcode)
         .get();
 
-      res.send({ remains: person.data()!.remains });
+      res.send({ position: person.data()!.position });
     } else {
       res.send("token expired");
     }

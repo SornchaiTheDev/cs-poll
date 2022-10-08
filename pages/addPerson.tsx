@@ -7,7 +7,7 @@ import Link from "next/link";
 
 function AddPerson() {
   const [name, setName] = useState<string>("");
-  const [remains, setRemains] = useState<string[]>([]);
+  const [isCanAdd, setIsCanAdd] = useState<boolean>(true);
   const [position, setPosition] = useState<string>("head");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isErr, setIsErr] = useState<boolean>(false);
@@ -29,8 +29,7 @@ function AddPerson() {
     const getRemains = await axios.post("/api/getRemains", {
       token: localStorage.getItem("accesstoken"),
     });
-    setRemains(getRemains.data.remains);
-    setPosition(getRemains.data.remains[0]);
+    setIsCanAdd(getRemains.data.position === null);
     setIsLoading(false);
   };
 
@@ -40,19 +39,24 @@ function AddPerson() {
 
   const addPerson = async () => {
     if (position === null || name === "") return;
-    const firstName = localStorage.getItem("firstName");
-    const res = await axios.post("/api/addPerson", {
-      name: `${name} (${firstName})`,
-      position,
-      token: localStorage.getItem("accesstoken"),
-    });
-    const { status } = res.data;
+    const firstName = session!.firstNameTh;
 
-    if (status === "success") {
-      router.reload();
-    } else {
-      setIsErr(true);
-      setName("");
+    const exp = new RegExp(firstName, "g");
+
+    if (name.match(exp)) {
+      const res = await axios.post("/api/addPerson", {
+        name,
+        position,
+        token: localStorage.getItem("accesstoken"),
+      });
+      const { status } = res.data;
+
+      if (status === "success") {
+        router.reload();
+      } else {
+        setIsErr(true);
+        setName("");
+      }
     }
   };
 
@@ -70,7 +74,7 @@ function AddPerson() {
         </Link>
         {isLoading ? (
           <h1 className="text-center my-10">กำลังโหลด ...</h1>
-        ) : remains.length === 0 ? (
+        ) : !isCanAdd ? (
           <div className="m-4 bg-red-500 py-4 rounded-lg">
             <h1 className="text-white font-bold text-center">
               ไม่สามารถเสนอชื่อได้แล้ว
@@ -78,37 +82,42 @@ function AddPerson() {
           </div>
         ) : (
           <>
-            <h2 className="text-lg mt-4 text-center my-4 font-bold">
-              เสนอชื่อตัวเอง
-            </h2>
+            <div className="my-4 ">
+              <h2 className="text-lg mt-4 text-center font-bold">
+                เสนอชื่อตัวเอง
+              </h2>
+              <p className="text-red-500 text-center">
+                *เสนอเข้าทำงานได้เพียง 1 ตำแหน่งเท่านั้น
+              </p>
+            </div>
             <h2>ตำแหน่ง</h2>
-            {remains.length > 0 && (
-              <select
-                className="text-xl border-2 rounded-lg p-2 mt-2"
-                onChange={handleOnRadioChange}
-              >
-                {remains.map((remain) => (
-                  <option value={remain} key={remain}>
-                    {remain === "head"
-                      ? "เฮดภาค"
-                      : remain === "second-head"
-                      ? "รองเฮดภาค"
-                      : remain === "secretary"
-                      ? "เลขานุการ"
-                      : remain === "money"
-                      ? "เหรัญญิก"
-                      : ""}
-                  </option>
-                ))}
-              </select>
-            )}
+
+            <select
+              className="text-xl border-2 rounded-lg p-2 mt-2"
+              onChange={handleOnRadioChange}
+            >
+              {["head", "second-head", "secretary", "money"].map((position) => (
+                <option value={position} key={position}>
+                  {position === "head"
+                    ? "เฮดภาค"
+                    : position === "second-head"
+                    ? "รองเฮดภาค"
+                    : position === "secretary"
+                    ? "เลขานุการ"
+                    : position === "money"
+                    ? "เหรัญญิก"
+                    : ""}
+                </option>
+              ))}
+            </select>
+
             <div className="my-4">
-              <h2>ชื่อเล่น</h2>
+              <h2>ชื่อ</h2>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 type="name"
-                placeholder="ชื่อเล่น"
+                placeholder="ชื่อเล่น (ชื่อจริง)"
                 className="border-2 rounded-lg p-2 w-full mt-2"
               />
             </div>

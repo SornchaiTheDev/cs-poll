@@ -43,7 +43,7 @@ export default async function handler(
           .collection("people")
           .doc(decoded.idcode)
           .update({
-            remains: firebaseAdmin.firestore.FieldValue.arrayRemove(position),
+            position,
           });
         res.send({ status: "success" });
       } else {
