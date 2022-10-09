@@ -8,7 +8,7 @@ const Login: NextPage = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isErr, setIsErr] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const router = useRouter();
   const Login = async () => {
     try {
@@ -19,11 +19,21 @@ const Login: NextPage = () => {
       });
 
       const { accesstoken, user } = res.data;
-      localStorage.setItem("accesstoken", accesstoken);
-      localStorage.setItem("firstName", user.firstNameTh);
-      router.push("/");
+
+      const { data }: any = await axios.post("/api/getUser", {
+        token: accesstoken,
+      });
+
+      if (data.canVote) {
+        localStorage.setItem("accesstoken", accesstoken);
+        localStorage.setItem("firstName", user.firstNameTh);
+        router.replace("/");
+      } else {
+        setError("คุณโหวตไปแล้ว!!!");
+        setIsLoading(false);
+      }
     } catch (err) {
-      setIsErr(true);
+      setError("เลขประจำตัว หรือ รหัสผ่านผิด");
       setIsLoading(false);
     }
   };
@@ -32,9 +42,7 @@ const Login: NextPage = () => {
     <div className="flex min-h-screen justify-center items-center">
       <div className="bg-white border-2 px-10 py-4 rounded-lg w-3/4 md:w-4/12 flex flex-col items-center">
         <h2 className="font-bold text-lg my-4">ล็อคอินด้วย Nontri Account</h2>
-        {isErr && (
-          <p className="text-red-500 mb-4">เลขประจำตัว หรือ รหัสผ่านผิด</p>
-        )}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <input
           type="text"
           value={username}

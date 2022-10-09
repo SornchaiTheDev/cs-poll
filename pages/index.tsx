@@ -30,6 +30,7 @@ const Home: NextPage = ({
   const [secondHead, setSecondHead] = useState<string>("");
   const [secretary, setSecretary] = useState<string>("");
   const [money, setMoney] = useState<string>("");
+  const [noVote, setNoVote] = useState<boolean>(false);
 
   const handleOnHeadClick = (e: any) => {
     setHead(e.target.value);
@@ -48,20 +49,26 @@ const Home: NextPage = ({
   };
 
   const handleOnVote = async () => {
-    if (head === "" || secondHead === "" || secretary === "" || money === "")
+    if (
+      (head === "" || secondHead === "" || secretary === "" || money === "") &&
+      !noVote
+    )
       return;
+
     try {
       const res = await axios.post("/api/vote", {
         head,
         secondHead,
         secretary,
         money,
+        noVote,
         token: localStorage.getItem("accesstoken"),
       });
 
       if (res.data.status === "success") {
-        router.replace("/result");
-        localStorage.setItem("isVoted", "true");
+        alert("โหวตสำเร็จ");
+        localStorage.clear();
+        router.replace("/login");
       }
     } catch (err) {
       alert("คุณโหวตไปแล้ว!!!");
@@ -69,15 +76,19 @@ const Home: NextPage = ({
     }
   };
 
-  useEffect(() => {
-    if (localStorage.getItem("isVoted") === "true") {
-      router.replace("/result");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("isVoted") === "true") {
+  //     router.replace("/result");
+  //   }
+  // }, []);
 
   const handleOnLogoutClick = () => {
     localStorage.removeItem("accesstoken");
     router.replace("/login");
+  };
+
+  const handleOnNoVoteClick = () => {
+    setNoVote(!noVote);
   };
 
   if (loading) return <></>;
@@ -171,12 +182,29 @@ const Home: NextPage = ({
                   </div>
                 ))}
               </div>
+              <div className="inline-flex gap-2 mt-4">
+                <input
+                  type="checkbox"
+                  checked={noVote}
+                  id="novote"
+                  onChange={handleOnNoVoteClick}
+                />
+                <label htmlFor="novote" className="text-lg">
+                  ไม่ประสงค์ลงคะแนน
+                </label>
+              </div>
               <p className="text-red-500 mt-4">
                 *โปรดมั่นใจก่อนเลือก เพราะเลือกได้ครั้งเดียวเท่านั้น !
               </p>
               <button
                 onClick={handleOnVote}
-                disabled={head === "" || secondHead === "" || secretary === "" || money === ""}
+                disabled={
+                  (head === "" ||
+                    secondHead === "" ||
+                    secretary === "" ||
+                    money === "") &&
+                  !noVote
+                }
                 className="w-full p-2 bg-lime-400 disabled:bg-gray-200 rounded-lg my-4"
               >
                 ส่ง

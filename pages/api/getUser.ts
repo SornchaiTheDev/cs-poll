@@ -16,7 +16,11 @@ export default async function handler(
         .collection("people")
         .doc(decoded.idcode)
         .get();
-      res.send(person.data());
+      if (person.exists) {
+        res.send(person.data());
+      } else {
+        res.send("none");
+      }
     } else {
       res.send("token expired");
     }

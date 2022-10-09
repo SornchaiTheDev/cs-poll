@@ -8,9 +8,23 @@ export default async function handler(
 ) {
   if (req.method !== "POST") return res.status(400).send("Method not allowed");
   try {
-    const { head, secondHead, secretary, money } = req.body;
+    const { head, secondHead, secretary, money, noVote } = req.body;
     const decoded: any = jwt_decode(req.body.token);
     if (decoded.exp > Date.now() / 1000) {
+      if (noVote) {
+        firebaseAdmin
+          .firestore()
+          .collection("people")
+          .doc(decoded.idcode)
+          .update({ canVote: false });
+        await firebaseAdmin
+          .firestore()
+          .collection("novotes")
+          .doc("count")
+          .set({ amount: firebaseAdmin.firestore.FieldValue.increment(1) });
+        return res.send({ code: 200, status: "success" });
+      }
+
       const person = await firebaseAdmin
         .firestore()
         .collection("people")
