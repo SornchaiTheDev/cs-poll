@@ -21,7 +21,7 @@ export default async function handler(
           .firestore()
           .collection("novotes")
           .doc("count")
-          .set({ amount: firebaseAdmin.firestore.FieldValue.increment(1) });
+          .update({ amount: firebaseAdmin.firestore.FieldValue.increment(1) });
         return res.send({ code: 200, status: "success" });
       }
 

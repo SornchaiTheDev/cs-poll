@@ -54,7 +54,7 @@ const Home: NextPage = ({
       !noVote
     )
       return;
-
+     
     try {
       const res = await axios.post("/api/vote", {
         head,
